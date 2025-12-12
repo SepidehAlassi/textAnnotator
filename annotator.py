@@ -14,7 +14,7 @@ and baby potatoes, then roast until the skin becomes crisp and golden.
 
 app.layout = html.Div(
     [
-        html.H2("Interactive Text Marker"),
+        html.H2("Interactive Text Annotator"),
         html.P(
             "Select some text below, enter a label, then click "
             "'Save selection' to store [start, end, label, text]. "
