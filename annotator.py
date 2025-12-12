@@ -55,11 +55,11 @@ app.layout = html.Div(
         html.Button("Finalize & download JSON", id="finalize", n_clicks=0),
 
         html.Hr(),
-        html.H4("Current selections dictionary"),
+        html.H4("Current annotations"),
 
         # Stores
         dcc.Store(id="selection-store"),          # latest raw selection from JS
-        dcc.Store(id="selections-dict", data={}), # accumulated selections in Python
+        dcc.Store(id="selections-dict", data={'annotations':[]}), # accumulated selections in Python
 
         # Download component
         dcc.Download(id="download-json"),
@@ -70,8 +70,6 @@ app.layout = html.Div(
         ),
     ]
 )
-
-# ---------- Clientside callback: get selection & indices in the browser ----------
 
 app.clientside_callback(
     """
@@ -140,8 +138,7 @@ def update_dict(latest_selection, selections_dict, label):
     label = label or ""  # allow empty label if user didn't type anything
 
     # Store as [start_index, end_index, label, selected_text]
-    idx = len(selections_dict)
-    selections_dict[str(idx)] = [start, end, label, text]
+    selections_dict['annotations'].append([start, end, label, text])
 
     pretty = json.dumps(selections_dict, indent=2, ensure_ascii=False)
     return selections_dict, pretty
@@ -160,7 +157,7 @@ def download_annotations(n_clicks, selections_dict):
         raise dash.exceptions.PreventUpdate
 
     # Fallback to empty dict if somehow None
-    selections_dict = selections_dict or {}
+    selections_dict = selections_dict or {'annotations':[]}
 
     # Return file for download
     return dcc.send_string(
